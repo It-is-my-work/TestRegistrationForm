@@ -1,10 +1,9 @@
 package com.demoqa;
 
 import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -17,6 +16,7 @@ public class RegistrationFormTest {
             dayOfBirth = "11",
             monthOfBirth = "May",
             yearOfBirth = "1918",
+            dateOfBirth = String.format("%s %s,%s", dayOfBirth, monthOfBirth, yearOfBirth),
             gender = "Male",
             subject1 = "Physics",
             subject2 = "Maths",
@@ -33,7 +33,7 @@ public class RegistrationFormTest {
     }
 
     @BeforeEach
-    void openPage(){
+    void openPage() {
         open("/automation-practice-form");
     }
 
@@ -50,20 +50,30 @@ public class RegistrationFormTest {
         $("#hobbiesWrapper").$(byText(hobby)).click();
         $("#uploadPicture").uploadFromClasspath(picture);
         $("#currentAddress").setValue(currentAddress);
-        $("#submit").scrollTo();
         $("#state").click();
         $(byText(state)).click();
         $("#city").click();
         $(byText(city)).click();
         $("#submit").click();
+
+        $(".modal-title").shouldHave(text("Thanks for submitting the form"));
+        $(".table-responsive").shouldHave(text(firstName + " " + lastName),
+                text(email),
+                text(gender),
+                text(mobile),
+                text(dateOfBirth),
+                text(subject1 + ", " + subject2),
+                text(hobby),
+                text(picture),
+                text(currentAddress),
+                text(state + " " + city)
+        );
     }
 
-    void fillDateOfBirth(){
+    void fillDateOfBirth() {
         $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-select").click();
-        $(byText(monthOfBirth)).click();
-        $(".react-datepicker__year-select").click();
-        $(byText(yearOfBirth)).click();
+        $(".react-datepicker__month-select").selectOption(monthOfBirth);
+        $(".react-datepicker__year-select").selectOption(yearOfBirth);
         $(".react-datepicker__month").$(byText(dayOfBirth)).click();
     }
 }
