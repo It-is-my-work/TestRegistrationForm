@@ -1,11 +1,12 @@
 package com.demoqa.tests;
 
-import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import pages.RegistrationFormPage;
 
-public class RegistrationFormTest {
+import static io.qameta.allure.Allure.step;
+
+public class RegistrationFormTest extends TestBase{
 
     Faker faker = new Faker();
     RegistrationFormPage registrationFormPage = new RegistrationFormPage();
@@ -29,48 +30,43 @@ public class RegistrationFormTest {
             expectedCityAndState = String.format("%s %s", state, city),
             modalTitle = "Thanks for submitting the form";
 
-
-    @BeforeAll
-    static void setUp() {
-        Configuration.baseUrl = "https://demoqa.com";
-        Configuration.browserSize = "1920x1080";
-    }
-
-    @BeforeEach
-    void openPage() {
-        registrationFormPage.openPage();
-    }
-
     @Test
+    @DisplayName("Fill registration form test")
     void fillRegFormTest() {
 
-        registrationFormPage.setFirstName(firstName)
-                .setLastName(lastName)
-                .setEmail(email)
-                .setGender(gender)
-                .setPhone(mobile)
-                .setBirthDate(dayOfBirth, monthOfBirth, yearOfBirth)
-                .setSubject(subject1)
-                .setHobby(hobby)
-                .uploadImg(picture)
-                .setAddress(currentAddress)
-                .setState(state)
-                .setCity(city)
-                .pressSubmit();
+        step("Open page", () -> {
+            registrationFormPage.openPage()
+                    .closeAdBlock();
+        });
 
-        registrationFormPage.checkModalTitle(modalTitle)
-                .checkResult("Student Name", expectedFullName)
-                .checkResult("Student Email", email)
-                .checkResult("Gender", gender)
-                .checkResult("Mobile", mobile)
-                .checkResult("Date of Birth", dateOfBirth)
-                .checkResult("Subjects", subject1)
-                .checkResult("Hobbies", hobby)
-                .checkResult("Picture", picture)
-                .checkResult("Address", currentAddress)
-                .checkResult("State and City", expectedCityAndState);
+        step("Fill registration form", () -> {
+            registrationFormPage.setFirstName(firstName)
+                    .setLastName(lastName)
+                    .setEmail(email)
+                    .setGender(gender)
+                    .setPhone(mobile)
+                    .setBirthDate(dayOfBirth, monthOfBirth, yearOfBirth)
+                    .setSubject(subject1)
+                    .setHobby(hobby)
+                    .uploadImg(picture)
+                    .setAddress(currentAddress)
+                    .setState(state)
+                    .setCity(city)
+                    .pressSubmit();
+        });
 
+        step("Check registration form completion", () -> {
+            registrationFormPage.checkModalTitle(modalTitle)
+                    .checkResult("Student Name", expectedFullName)
+                    .checkResult("Student Email", email)
+                    .checkResult("Gender", gender)
+                    .checkResult("Mobile", mobile)
+                    .checkResult("Date of Birth", dateOfBirth)
+                    .checkResult("Subjects", subject1)
+                    .checkResult("Hobbies", hobby)
+                    .checkResult("Picture", picture)
+                    .checkResult("Address", currentAddress)
+                    .checkResult("State and City", expectedCityAndState);
+        });
     }
-
-
 }
